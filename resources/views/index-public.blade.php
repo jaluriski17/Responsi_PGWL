@@ -7,7 +7,6 @@
 @endsection
 
 @section('script')
-
     <script>
         //map
         var map = L.map('map').setView([-7.55, 109], 10);
@@ -24,14 +23,29 @@
 
 
 
- /* GeoJSON Point */
- var point = L.geoJson(null, {
-            onEachFeature: function(feature, layer) {
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images/') }}/" + feature.properties.image + "'class='img-thumbnail' alt='...'>"
-                    ;
 
+
+
+
+
+        /* GeoJSON Point */
+        var point = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
+                var popupContent = "Name: " + feature.properties.name + "<br>" +
+                    "Description: " + feature.properties.description + "<br>" +
+                    "Photo: <img src='{{ asset('storage/images/') }}/" + feature.properties.image +
+                    "' class='img-thumbnail' alt='...'>" + "<br>" +
+
+                    "<div class='d-flex flex-row mt-3'>" +
+                    "<a href='{{ url('edit-point') }}/" + feature.properties.id +
+                    "' class='btn btn-sm btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
+
+                    "<form action='{{ url('delete-point') }}/" + feature.properties.id + "' method='POST'>" +
+                    '{{ csrf_field() }}' +
+                    '{{ method_field('DELETE') }}' +
+                    "<button type='submit' class='btn btn-sm btn-danger' onClick='return confirm(\"Hapus kah?\")'><i class='fa-solid fa-trash-can'></i> Delete</button>" +
+                    "</form>" +
+                    "</div>";
                 layer.on({
                     click: function(e) {
                         point.bindPopup(popupContent);
@@ -50,10 +64,22 @@
         /* GeoJSON Polyline */
         var polyline = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images/') }}/" + feature.properties.image + "'class='img-thumbnail' alt='...'>"
-                    ;
+                var popupContent = "Name: " + feature.properties.name + "<br>" +
+                    "Description: " + feature.properties.description + "<br>" +
+                    "Photo: <img src='{{ asset('storage/images/') }}/" + feature.properties.image +
+                    "' class='img-thumbnail' alt='...'>" + "<br>" +
+
+                    "<div class='d-flex flex-row mt-3'>" +
+                    "<a href='{{ url('edit-polyline') }}/" + feature.properties.id +
+                    "' class='btn btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
+
+                    "<form action='{{ url('delete-polyline') }}/" + feature.properties.id +
+                    "' method='POST'>" +
+                    '{{ csrf_field() }}' +
+                    '{{ method_field('DELETE') }}' +
+                    "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Menghapus Data Ini?)'><i class='fa-solid fa-trash'></i></button>" +
+                    "</form>" + "</div>";
+
                 layer.on({
                     click: function(e) {
                         polyline.bindPopup(popupContent);
@@ -69,13 +95,25 @@
             map.addLayer(polyline);
         });
 
-        /* GeoJSON polygon */
+        /* GeoJSON Polygon */
         var polygon = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Foto: <img src='{{ asset('storage/images/') }}/" + feature.properties.image + "'class='img-thumbnail' alt='...'>"
-                    ;
+                var popupContent = "Name: " + feature.properties.name + "<br>" +
+                    "Description: " + feature.properties.description + "<br>" +
+                    "Photo: <img src='{{ asset('storage/images/') }}/" + feature.properties.image +
+                    "' class='img-thumbnail' alt='...'>" + "<br>" +
+
+                    "<div class='d-flex flex-row mt-3'>" +
+                    "<a href='{{ url('edit-polygon') }}/" + feature.properties.id +
+                    "' class='btn btn-sm btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
+
+                    "<form action='{{ url('delete-polygon') }}/" + feature.properties.id + "' method='POST'>" +
+                    '{{ csrf_field() }}' +
+                    '{{ method_field('DELETE') }}' +
+                    "<button type='submit' class='btn btn-sm btn-danger' onClick='return confirm(\"Hapus kah?\")'><i class='fa-solid fa-trash-can'></i> Delete</button>" +
+                    "</form>" +
+                    "</div>";
+
                 layer.on({
                     click: function(e) {
                         polygon.bindPopup(popupContent);
@@ -92,7 +130,6 @@
         });
 
 
-
         // Function to create popup content
         function createPopupContent(feature) {
             return " Kecamatan : " + feature.properties.WADMKC + "<br>" +
@@ -107,7 +144,7 @@
                 opacity: 1,
                 color: 'white',
                 dashArray: '3',
-                fillOpacity: 0.5
+                fillOpacity: 0.2
             };
         }
 
@@ -141,25 +178,34 @@
             map.addLayer(polygons);
         });
 
-        
 
-        //layer control
+               L.Routing.control({
+  waypoints: [
+    L.latLng(-7.229, 108.618),
+    L.latLng(-7.673, 109.349)
+  ]
+}).addTo(map);
+
+
+
+
+
+        /* Layer Control */
         var overlayMaps = {
-            "Point": point,
-            "Polyline": polyline,
-            "Polygon": polygon
+            "Points": point,
+            "Polylines": polyline,
+            "Polygons": polygon,
+
+        };
+        var basemap = {
+            "OpenStreetMap": om,
+            "Stadia AlidadeSatellite": sa,
+
         };
 
-
-        var basemap ={
-            "OpenStreetMap":om,
-            " Stadia AlidadeSatellite":sa
-        };
 
         var layerControl = L.control.layers(basemap, overlayMaps).addTo(map);
 
 
-        //var layerControl = L.control.layers(null, overlayMaps, {collapsed: false}).addTo(map);
-
-    </script>
-@endsection
+  ; </script>
+    @endsection

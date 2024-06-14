@@ -2,20 +2,20 @@
 
 @section('styles')
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
     <style>
-    html,
-    body {
-        height: 100%;
-        width: 100%;
-    }
+        html,
+        body {
+            height: 100%;
+            width: 100%;
+        }
 
-    #map {
-        height: calc(100vh - 56px);
-        width: 100%;
-        margin: 0;
-    }
-</style>
-
+        #map {
+            height: calc(100vh - 56px);
+            width: 100%;
+            margin: 0;
+        }
+    </style>
 @endsection
 
 @section('content')
@@ -153,6 +153,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://unpkg.com/terraformer@1.0.7/terraformer.js"></script>
     <script src="https://unpkg.com/terraformer-wkt-parser@1.1.2/terraformer-wkt-parser.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         // Map
         var map = L.map('map').setView([-7.55, 109], 10);
@@ -165,7 +166,6 @@
         var sa = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_satellite/{z}/{x}/{y}{r}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
-
 
 
 
@@ -225,11 +225,13 @@
                     "' class='img-thumbnail' alt='...'>" + "<br>" +
 
                     "<div class='d-flex flex-row mt-3'>" +
-                    "<a href='{{ url('edit-point') }}/" + feature.properties.id + "' class='btn btn-sm btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
+                    "<a href='{{ url('edit-point') }}/" + feature.properties.id +
+                    "' class='btn btn-sm btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
 
                     "<form action='{{ url('delete-point') }}/" + feature.properties.id + "' method='POST'>" +
                     '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' + "<button type='submit' class='btn btn-sm btn-danger' onClick='return confirm(\"Hapus kah?\")'><i class='fa-solid fa-trash-can'></i> Delete</button>" +
+                    '{{ method_field('DELETE') }}' +
+                    "<button type='submit' class='btn btn-sm btn-danger' onClick='return confirm(\"Hapus kah?\")'><i class='fa-solid fa-trash-can'></i> Delete</button>" +
                     "</form>" +
                     "</div>";
                 layer.on({
@@ -259,9 +261,11 @@
                     "<a href='{{ url('edit-polyline') }}/" + feature.properties.id +
                     "' class='btn btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
 
-                    "<form action='{{ url('delete-polyline') }}/" + feature.properties.id + "' method='POST'>" +
+                    "<form action='{{ url('delete-polyline') }}/" + feature.properties.id +
+                    "' method='POST'>" +
                     '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' + "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Menghapus Data Ini?)'><i class='fa-solid fa-trash'></i></button>" +
+                    '{{ method_field('DELETE') }}' +
+                    "<button type='submit' class='btn btn-danger' onclick='return confirm(Yakin Menghapus Data Ini?)'><i class='fa-solid fa-trash'></i></button>" +
                     "</form>" + "</div>";
 
                 layer.on({
@@ -288,11 +292,13 @@
                     "' class='img-thumbnail' alt='...'>" + "<br>" +
 
                     "<div class='d-flex flex-row mt-3'>" +
-                    "<a href='{{ url('edit-polygon') }}/" + feature.properties.id + "' class='btn btn-sm btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
+                    "<a href='{{ url('edit-polygon') }}/" + feature.properties.id +
+                    "' class='btn btn-sm btn-warning me-2'><i class='fa-solid fa-edit'></i></a>" +
 
                     "<form action='{{ url('delete-polygon') }}/" + feature.properties.id + "' method='POST'>" +
                     '{{ csrf_field() }}' +
-                    '{{ method_field('DELETE') }}' + "<button type='submit' class='btn btn-sm btn-danger' onClick='return confirm(\"Hapus kah?\")'><i class='fa-solid fa-trash-can'></i> Delete</button>" +
+                    '{{ method_field('DELETE') }}' +
+                    "<button type='submit' class='btn btn-sm btn-danger' onClick='return confirm(\"Hapus kah?\")'><i class='fa-solid fa-trash-can'></i> Delete</button>" +
                     "</form>" +
                     "</div>";
 
@@ -311,6 +317,7 @@
             map.addLayer(polygon);
         });
 
+
         // Function to create popup content
         function createPopupContent(feature) {
             return " Kecamatan : " + feature.properties.WADMKC + "<br>" +
@@ -325,7 +332,7 @@
                 opacity: 1,
                 color: 'white',
                 dashArray: '3',
-                fillOpacity: 0.5
+                fillOpacity: 0.2
             };
         }
 
@@ -359,6 +366,10 @@
             map.addLayer(polygons);
         });
 
+
+
+
+
         /* Layer Control */
         var overlayMaps = {
             "Points": point,
@@ -366,9 +377,9 @@
             "Polygons": polygon,
 
         };
-         var basemap ={
-            "OpenStreetMap":om,
-            "Stadia AlidadeSatellite":sa,
+        var basemap = {
+            "OpenStreetMap": om,
+            "Stadia AlidadeSatellite": sa,
 
         };
 
@@ -378,7 +389,6 @@
         // var layerControl = L.control.layers(null, overlayMaps, {
         //     collapsed: false
         // }).addTo(map);
-
     </script>
 @endsection
 
