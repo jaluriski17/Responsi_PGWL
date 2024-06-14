@@ -12,13 +12,24 @@ class MapController extends Controller
             "title" => "Petaku",
         ];
 
-        //check login/gk
-        if(auth()->check()) {
-            return view('index', $data);
+        if (auth()->check()) {
+            return view ('index', $data);
+        } else {
+            return view('landing', $data);
+        }
+    }
+
+    public function map()
+    {
+        $data = [
+            "title" => "Petaku",
+        ];
+
+        if (auth()->check()) {
+            return view ('index', $data);
         } else {
             return view('index-public', $data);
         }
-        
     }
     public function table()
     {
@@ -27,5 +38,13 @@ class MapController extends Controller
         ];
 
         return view('table',$data);
+    }
+
+    public function landing()
+    {
+        $data = [
+            "title" => "Landing"
+        ];
+        return view('landing', $data);
     }
 }

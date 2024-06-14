@@ -320,8 +320,7 @@
 
         // Function to create popup content
         function createPopupContent(feature) {
-            return " Kecamatan : " + feature.properties.WADMKC + "<br>" +
-                    " Luas:  " + feature.properties.Luas;
+            return " Kategori : " + feature.properties.REMARK;
         }
 
         // Function to style each feature
@@ -330,9 +329,9 @@
                 fillColor: getRandomColor(),
                 weight: 1,
                 opacity: 1,
-                color: 'white',
-                dashArray: '3',
-                fillOpacity: 0.2
+                color: 'red',
+                dashArray: '0',
+                fillOpacity: 5
             };
         }
 
@@ -361,13 +360,27 @@
         });
 
         // Load GeoJSON data
-        $.getJSON("{{ asset('cilacap.json') }}", function(data) {
+        $.getJSON("{{ asset('jalan2.json') }}", function(data) {
             polygons.addData(data);
             map.addLayer(polygons);
         });
 
-
-
+        // Image Watermark
+        L.Control.Watermark = L.Control.extend({
+            onAdd: function(map) {
+                var img2 = L.DomUtil.create("img");
+                img2.src = "/storage/img/logo2.png";
+                img2.style.width = "150px";
+                return img2;
+            },
+        });
+        L.control.watermark = function(opts) {
+            return new L.Control.Watermark(opts);
+        };
+        L.control.watermark({
+            position: "bottomright"
+        }).addTo(map);
+ // C:\Users\Lenovo\Documents\Semester 4\pgwl-111 - 2\pgwl-111 - 2\image
 
 
         /* Layer Control */
@@ -386,6 +399,21 @@
 
         var layerControl = L.control.layers(basemap, overlayMaps).addTo(map);
 
+        // Add search control to the map
+var searchControl = new L.Control.Search({
+    layer: point,
+    propertyName: 'name',
+    marker: false,
+    moveToLocation: function(latlng, title, map) {
+        map.setView(latlng, 15);
+        L.popup()
+            .setLatLng(latlng)
+            .setContent(title)
+            .openOn(map);
+    }
+});
+
+map.addControl(searchControl)
         // var layerControl = L.control.layers(null, overlayMaps, {
         //     collapsed: false
         // }).addTo(map);
